@@ -1,0 +1,204 @@
+{
+  "main": {
+    "id": "afbd7691cfa9228a",
+    "type": "split",
+    "children": [
+      {
+        "id": "9a25c2bb1b53ecd6",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "fd4b15368fb94150",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "7 - Instance Segmentation and Panoptic Segmentation.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "7 - Instance Segmentation and Panoptic Segmentation"
+            }
+          },
+          {
+            "id": "f4760b772c17bfea",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "8 - Unimodal 3D Object Detection.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "8 - Unimodal 3D Object Detection"
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "4892558487c3cd93",
+    "type": "split",
+    "children": [
+      {
+        "id": "557298285070a992",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "77388be0c544220b",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "3cef0f3df64ab26a",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "b8f0b7548efbec13",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "right": {
+    "id": "767a8a880c4d051c",
+    "type": "split",
+    "children": [
+      {
+        "id": "557c20c07314e1f8",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "14d1bbc72a75cd70",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "4 - Semantic Segmentation.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for 4 - Semantic Segmentation"
+            }
+          },
+          {
+            "id": "1b80cad8fa4200cb",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "4 - Semantic Segmentation.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from 4 - Semantic Segmentation"
+            }
+          },
+          {
+            "id": "2f5bd10bce0ee296",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "3fbe7313383fcfd5",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "4 - Semantic Segmentation.md"
+              },
+              "icon": "lucide-list",
+              "title": "Outline of 4 - Semantic Segmentation"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "f4760b772c17bfea",
+  "lastOpenFiles": [
+    "7 - Instance Segmentation and Panoptic Segmentation.md",
+    "8 - Unimodal 3D Object Detection.md",
+    "Pasted image 20250131171932.png",
+    "Pasted image 20250131120323.png",
+    "Pasted image 20250131114253.png",
+    "6 - Object Detection.md",
+    "4 - Semantic Segmentation.md",
+    "3 - Fundamental Computer Vision Architectures and Algorithmsfor Autonomous Cars (continued).md",
+    "2 - Fundamental Computer Vision Architectures and Algorithmsfor Autonomous Cars.md",
+    "1 - Fundamentals of Autonomous Cars.md",
+    "Pasted image 20250131104906.png",
+    "Pasted image 20250131103346.png",
+    "5 - Depth Estimation.md",
+    "Pasted image 20250131103011.png",
+    "Pasted image 20250131102544.png",
+    "Pasted image 20250130161517.png",
+    "Pasted image 20250130161420.png",
+    "Pasted image 20250130154608.png",
+    "Welcome.md"
+  ]
+}
