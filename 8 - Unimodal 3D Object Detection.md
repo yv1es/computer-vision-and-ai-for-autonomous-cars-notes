@@ -170,3 +170,24 @@ $$
 VoxelNet uses a multi-task loss similar to that employed by [[6 - Object Detection#Faster R-CNN]] for region proposal generation:
 - Smooth L1 loss for regression only for positive anchors
 - Cross-entropy for classification into positive and negative anchors for both types.
+
+### Augmentations
+Place artificial 3D objects in the training scene.
+
+### Implementation details
+For car detection, we consider point clouds within the range $[-3, 1] \times [-40, 40] \times [0, 70.4]$ meters along Z, Y, X axis respectively. We choose a voxel size of $v_D=0.4, v_H=0.2, v_W=0.2$ meters, which leads to $D'=10, H'=400, W'=352$. The maximum number of sampled points for each non-empty voxel is 35.
+
+For pedestrian and cyclist detection, point clouds within the range $[-3, 1] \times [-20, 20] \times [0, 48]$ meters along Z, Y, X axis respectively. We use the same voxel size as for car detection, which yields $D=10, H=200, W=240$. The maximum number of sampled points for each non-empty voxel is 45.
+
+### Results 
+![[Pasted image 20250131174957.png]]
+The table shows [[6 - Object Detection#Average Precision (AP)]] (on KITTI I belive)
+
+Easy and moderate do not evaluate points with very low point count. 
+
+
+
+## PointRCNN: proposals from segementation
+
+# TODO
+
