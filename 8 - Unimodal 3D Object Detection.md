@@ -181,13 +181,53 @@ For pedestrian and cyclist detection, point clouds within the range $[-3, 1] \ti
 
 ### Results 
 ![[Pasted image 20250131174957.png]]
-The table shows [[6 - Object Detection#Average Precision (AP)]] (on KITTI I belive)
+The table shows [[6 - Object Detection#Average Precision (AP)]] (on KITTI)
 
-Easy and moderate do not evaluate points with very low point count. 
+Easy and moderate do not evaluate ground truth boxes with very low point count. 
 
 
+## PointRCNN: proposals from segmentation
+Uses foreground-background segmentation as an auxiliary task for region proposal. 
 
-## PointRCNN: proposals from segementation
+### Object proposals
+Use [[8 - Unimodal 3D Object Detection#PointNet++]] to generate point wise feature vectors. 
+Learn per pixel foreground-background segmentation from the features. 
+And additionally for every foreground point regress a bounding box proposal using **bin based 3D box regression**. 
 
-# TODO
+#### Bin based 3D box regression
+Discretize the location space into bins. 
+The location space is a x-y coordinate frame with origin at the respective point. 
 
+Then classify which bin does contain the center of the object that the point belongs to. 
+The yaw angle is also binned, while the z coordinate is just continuous regression. 
+
+Then there is also a residual for sub-bin length accuracy. 
+
+![[Pasted image 20250201140717.png]]
+
+
+Idea behind this: 
+* have a more robust course localization of the object center
+
+**Train** binning with cross entropy classification loss.
+The other parameters (z and box dimensions) are trained with standard regression.
+![[Pasted image 20250201141159.png]]
+
+### Point cloud region pooling
+The per point proposals need to be processed. 
+
+Take also neighboring points into account (e.g. enlarge the bounding box a bit). 
+Then transform to canonical coordinate frame. 
+Augment (concatenate) the local spatial points (in canonical frame) with the semantic features and the foreground-background prediction. 
+
+These augmented point feature are the passed through a PointNet++ encoder and to the final prediction heads to output refined bounding boxes and confidence prediction. 
+#### Canonical Transformation
+For every box proposal convert it to a canonical coordinate frame. (e.g. all the car proposals should be oriented the same for further processing). 
+![[Pasted image 20250201141633.png]]
+
+### Complete PointRCNN
+![[Pasted image 20250201142237.png]]
+
+### Results
+AP of the 3 most popular classed in KITTI
+![[Pasted image 20250201142337.png]]
