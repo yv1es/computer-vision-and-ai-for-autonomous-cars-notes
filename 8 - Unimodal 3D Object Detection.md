@@ -231,3 +231,7 @@ For every box proposal convert it to a canonical coordinate frame. (e.g. all the
 ### Results
 AP of the 3 most popular classed in KITTI
 ![[Pasted image 20250201142337.png]]
+
+
+
+

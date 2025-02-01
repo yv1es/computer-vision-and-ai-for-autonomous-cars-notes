@@ -116,8 +116,23 @@ Improving scale invariance.
 # Direct set prediction for object detection
 Issues with indirect detectors
 * Heuristic IoU parameter for ground truth generations
-* Multiple anchors for single ground truth box, requiring non-maxima suppression
+* Multiple anchors for single ground truth box, requiring non-maxima suppression $\Longrightarrow$ duplicate predictions (**expensive non-max suppression** is required)
+
+## Loss formulation
+![[Pasted image 20250201154124.png]]
+
+Define $\mathcal{L}_{match}$ as the matching cost between ground truth and predicted bounding box. 
+Use this to find an minimal cost matching using the Hungarian algorithm. 
+
+![[Pasted image 20250201155628.png]]
+
+Then use the found matching to define the **final training loss $\mathcal{L}_{Hungarian}$** 
+![[Pasted image 20250201155823.png]]
+Notice that for the matching cost the prediction probability is not logged, to keep its value in the same range as the $\mathcal{L}_{box}$ regression loss. Then for the final training loss the log is added. 
 
 
+## Detection Transformer (DETR)
 
-# TODO ...
+![[Pasted image 20250201162211.png]]
+
+![[Pasted image 20250201162308.png]]
