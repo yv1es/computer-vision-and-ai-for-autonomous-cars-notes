@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "10- Domain Adaptation.md",
+                "file": "11 - Multi-modal 2D and 3D Object Detection.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "10- Domain Adaptation"
+              "title": "11 - Multi-modal 2D and 3D Object Detection"
             }
           }
         ]
@@ -165,24 +165,25 @@
   },
   "active": "30f4a56bea43e200",
   "lastOpenFiles": [
-    "Pasted image 20250204091948.png",
-    "Pasted image 20250204091937.png",
-    "Pasted image 20250204091907.png",
-    "Pasted image 20250204090637.png",
-    "Pasted image 20250204090629.png",
-    "Pasted image 20250203182137.png",
-    "Pasted image 20250203173414.png",
-    "Pasted image 20250203173237.png",
-    "Pasted image 20250203173102.png",
-    "Pasted image 20250203172852.png",
-    "Pasted image 20250203172839.png",
+    "Pasted image 20250204154423.png",
+    "Pasted image 20250204154257.png",
+    "Pasted image 20250204154113.png",
+    "4 - Semantic Segmentation.md",
+    "6 - Object Detection.md",
+    "5 - Depth Estimation.md",
+    "8 - Unimodal 3D Object Detection.md",
+    "7 - Instance Segmentation and Panoptic Segmentation.md",
+    "11 - Multi-modal 2D and 3D Object Detection.md",
+    "Pasted image 20250204143207.png",
+    "Pasted image 20250204141102.png",
+    "Pasted image 20250204140959.png",
+    "Pasted image 20250204135718.png",
+    "Pasted image 20250204135327.png",
+    "Pasted image 20250204134107.png",
+    "Pasted image 20250204121108.png",
+    "Pasted image 20250204120607.png",
     "9 - 3D Reconstruction and Localization.md",
     "10- Domain Adaptation.md",
-    "4 - Semantic Segmentation.md",
-    "5 - Depth Estimation.md",
-    "6 - Object Detection.md",
-    "7 - Instance Segmentation and Panoptic Segmentation.md",
-    "8 - Unimodal 3D Object Detection.md",
     "3 - Fundamental Computer Vision Architectures and Algorithmsfor Autonomous Cars (continued).md",
     "2 - Fundamental Computer Vision Architectures and Algorithmsfor Autonomous Cars.md",
     "1 - Fundamentals of Autonomous Cars.md",
