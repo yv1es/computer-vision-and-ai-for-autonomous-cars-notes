@@ -95,3 +95,12 @@ The **discrepancy network** is then trained to  detect the altered instances (gi
 
 
 
+# Vehicle-to-vehicle communication for perception 
+
+## V2VNet 
+Transmits deep lidar features in between vehicles to detect occluded cards. 
+Transmitting raw sensor data uses too much bandwidth and just the bounding boxes are too abstract. 
+![[Pasted image 20250205103913.png]]
+
+![[Pasted image 20250205103941.png]]
+
