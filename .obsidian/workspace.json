@@ -20,8 +20,23 @@
               "icon": "lucide-file",
               "title": "11 - Multi-modal 2D and 3D Object Detection"
             }
+          },
+          {
+            "id": "09904a812000c915",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "12 - Visual Grounding, Anomaly Segmentation and Vehicle-to-Vehicle Communication.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "12 - Visual Grounding, Anomaly Segmentation and Vehicle-to-Vehicle Communication"
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -163,8 +178,15 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "30f4a56bea43e200",
+  "active": "09904a812000c915",
   "lastOpenFiles": [
+    "Pasted image 20250205092441.png",
+    "Pasted image 20250205092103.png",
+    "Pasted image 20250205090513.png",
+    "Pasted image 20250204185630.png",
+    "Pasted image 20250204183046.png",
+    "11 - Multi-modal 2D and 3D Object Detection.md",
+    "12 - Visual Grounding, Anomaly Segmentation and Vehicle-to-Vehicle Communication.md",
     "Pasted image 20250204154423.png",
     "Pasted image 20250204154257.png",
     "Pasted image 20250204154113.png",
@@ -173,15 +195,9 @@
     "5 - Depth Estimation.md",
     "8 - Unimodal 3D Object Detection.md",
     "7 - Instance Segmentation and Panoptic Segmentation.md",
-    "11 - Multi-modal 2D and 3D Object Detection.md",
     "Pasted image 20250204143207.png",
     "Pasted image 20250204141102.png",
     "Pasted image 20250204140959.png",
-    "Pasted image 20250204135718.png",
-    "Pasted image 20250204135327.png",
-    "Pasted image 20250204134107.png",
-    "Pasted image 20250204121108.png",
-    "Pasted image 20250204120607.png",
     "9 - 3D Reconstruction and Localization.md",
     "10- Domain Adaptation.md",
     "3 - Fundamental Computer Vision Architectures and Algorithmsfor Autonomous Cars (continued).md",
