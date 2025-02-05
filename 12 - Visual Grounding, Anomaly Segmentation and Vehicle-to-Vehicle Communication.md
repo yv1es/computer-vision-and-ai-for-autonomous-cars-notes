@@ -60,6 +60,38 @@ By definition, anomalies are not **out-of-distribution samples**, not in our tra
 * **generative**: train on additional auxiliary negative data (often synthetic)  
 
 ## Bayesian DeepLab
-Discriminative regime. 
+Discriminative. 
 
-WIP
+Express the total uncertainty in the model’s predictions as a combination of:
+- **Epistemic uncertainty**, i.e., uncertainty associated with the model
+- **Aleatory uncertainty**, i.e., uncertainty associated with the data
+
+**What we are after for anomaly segmentation is the epistemic uncertainty.**
+
+- With only one sample and a deterministic network mapping, we cannot estimate the epistemic uncertainty.
+- **Solution:** Monte Carlo integration using dropout. Multiple forward passes with the same input and different, randomly de-activated neurons.
+
+Total uncertainty over $T$ Monte Carlo samples / forward passes: **predictive entropy of output**  
+$$
+\mathcal{H}(y \mid \mathbf{x}) = -\sum_{c} \left( \frac{1}{T} \sum_{t} y_c^t \right) \log \left( \frac{1}{T} \sum_{t} y_c^t \right)
+$$
+
+**Epistemic uncertainty**: mutual information between the output distribution and the weights distribution. A high value of epistemic uncertainty is an indication of an outlier.  
+$$
+\mathcal{I}(y, \mathbf{w} \mid \mathbf{x}) = \mathcal{H}(y \mid \mathbf{x}) - \frac{1}{T} \sum_{c, t} y_c^t \log y_c^t
+$$
+## Image re-synthesis
+Generative. 
+
+Components: 
+1. A "normal" semantic segmentation model
+2. The re-synthesize model (e.g. a conditional GAN) which takes as input the segmentation map and synthesizes a image. 
+3. The discrepancy network, which is trained to detect inconsistencies between the original input image and the re-synthesized image. 
+
+We take a image and its ground truth semseg labels and assign some instances a random label. Then the altered semseg labels are re-synthesized to an image. 
+The **discrepancy network** is then trained to  detect the altered instances (given the re-synthesized image and the original image). 
+
+![[Pasted image 20250205102252.png]]
+
+
+
