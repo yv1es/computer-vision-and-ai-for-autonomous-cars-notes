@@ -22,17 +22,14 @@ Level 0 means no automation.
 
 
 # Etc
-Sigmoid $\sigma(x) = \frac{1}{1 + exp(-x)}$  
-Softmax $softmax(z)_i = \frac{exp(z_i)}{\Sigma_jexp(z_j)}$ 
+**Sigmoid** $\sigma(x) = \frac{1}{1 + exp(-x)}$  
+**Softmax** $softmax(z)_i = \frac{exp(z_i)}{\Sigma_jexp(z_j)}$ 
+**SGD with momentum** ($\alpha$  slightly below 1): $\theta \leftarrow \theta + \mathbf{v}$ with
+$$\mathbf{v} \leftarrow \alpha \mathbf{v} - (1 - \alpha) \eta \nabla_\theta \left( \frac{1}{B} \sum_{i=1}^B \mathcal{L}(f(x_i; \theta), y_i) \right) $$
 
-SGD with momentum ($\alpha$  slightly below 1) 
-![[Pasted image 20250206084412.png]]
-
-Kaiming initialzation: 0-mean Gaussian with stddev = $\sqrt{2/d_{l-1}}$ 
-
-Batch Norm. (BN): First each unit is normalized (subtract mean and divide by variance of the mini-batch). Then secondly scale (by $\gamma$) and shift (by $\beta$) (learnable $\gamma, \beta$).  
-
-Conv. output. $\lfloor \frac{H + 2P - m}{s} \rfloor + 1$   
-
-
+**Kaiming initialzation:** 0-mean Gaussian with stddev = $\sqrt{2/d_{l-1}}$ 
+**Batch Norm. (BN):** First each unit is normalized (subtract mean and divide by variance of the mini-batch). Then secondly scale (by $\gamma$) and shift (by $\beta$) (learnable $\gamma, \beta$).  
+**Conv. output dimension:** $\lfloor \frac{H + 2P - m}{s} \rfloor + 1$   
+**Attention:** $X_l = \text{softmax}(Q_l K_l^\top) V_l + X_{l-1}$ 
+**Masked:** $X_l = \text{softmax}(\mathcal{M}_{l-1} + Q_l K_l^\top) V_l + X_{l-1}$  w. $\mathcal{M}_{l-1}(x, y) = \begin{cases} 0 & \text{if } \mathbf{M}_{l-1}(x, y) = 1 \\ -\infty & \text{otherwise} \end{cases}$
 

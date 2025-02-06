@@ -113,5 +113,50 @@ Do instance segmentation and semantic segmentation and merge the outputs.
 ![[Pasted image 20250130161517.png]]
 
 
-# TODO ...
+## MaskFormer
+Set of ground-truth segments:  
+$$z^{gt} = \{(c_i^{gt}, m_i^{gt}) | c_i^{gt} \in \{1, \dots, K\}, m_i^{gt} \in \{0, 1\}^{H \times W}\}_{i=1}^{N^{gt}}$$
+Output as set of probability-mask pairs:  
+$$z = \{(p_i, m_i)\}_{i=1}^N \quad \text{(soft mask values in } [0, 1])$$
+Find the optimal matching between the ground-truth set and the output set with the Hungarian algorithm for bipartite matching, as in object detection.
 
+Pad ground-truth set with "no object" tokens to allow one-to-one matching.
+
+Need to define the **matching cost** for each (predicted mask, ground-truth mask) pair.
+
+Matching cost for each (predicted mask, ground-truth mask) pair:  
+$$\mathcal{L}_{\text{match}}(z_{\sigma(i)}, z_i^{gt}) = -[c_i^{gt} \neq \emptyset] p_{\sigma(i)}(c_i^{gt}) + [c_i^{gt} \neq \emptyset] \mathcal{L}_{\text{mask}}(m_{\sigma(i)}, m_i^{gt})$$  
+$$\mathcal{L}_{\text{mask}}: \text{binary mask overlap loss}$$  
+Avoid logarithm in probabilities for the classification term of matching cost, in order to make this term commensurate with the mask overlap term.
+
+Set loss (Hungarian loss) given the optimal match $\hat{\sigma}$ found by the Hungarian algorithm: **mask-classification loss**  
+$$\mathcal{L}_{\text{mask-cls}}(z, z^{gt}) = \sum_{i=1}^N -\log(p_{\hat{\sigma}(i)}(c_i^{gt})) + [c_i^{gt} \neq \emptyset] \mathcal{L}_{\text{mask}}(m_{\hat{\sigma}(i)}, m_i^{gt})$$
+
+![[Pasted image 20250206100710.png]]
+* No transformer encoder (unlike DETR) 
+* Pixel decoder for per pixel features (unlike DETER). The masks are predicted as the dot product between mask and pixel embeddings (apply sigmoid). 
+* can be trained on semantic-, instance- and panoptic segmentation
+
+Different **inference processes** are applied in practice.
+- **Panoptic and instance segmentation**: for each pixel, predict the dominant probability-mask pair  $$\arg \max_{i: c_i \neq \emptyset} p_i(c_i) \cdot m_i[h, w]$$  both the probability of the most likely class and the mask probability should be high.
+- **Semantic segmentation**: marginalize over all probability-mask pairs to predict the semantic class   $$\arg \max_{c \in \{1, \dots, K\}} \sum_{i=1}^N p_i(c) \cdot m_i[h, w]$$
+MaskFormer is not efficent to train and less performant than specialized architectures. 
+
+
+## Mask2Former
+Improvements: 
+1. mask the image feature cross attention
+2. do cross-attention before self attention in decoder block 
+3. pass higher resolution image features to transformer decoder
+4. $\mathcal{L}_{mask}$ in the matching loss is computed for every ground truth, prediction pair ($O(n^2)$. Use a approximation: 
+	1. Uniform sampling of points for the matching cost
+	2. importance sampling for the final mask loss
+
+But still needs to be re-trained for different tasks. 
+
+## OneFormer
+One model for semantic- instance and panoptic seg. 
+
+Generate a task text (e.g. "a photo with a car, a photo with a car, ...")
+![[Pasted image 20250206111806.png]]
+The text part is only there for training. At inference the queries are just initialized with the task token. 
