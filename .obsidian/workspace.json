@@ -20,8 +20,37 @@
               "icon": "lucide-file",
               "title": "12 - Visual Grounding, Anomaly Segmentation and Vehicle-to-Vehicle Communication"
             }
+          },
+          {
+            "id": "03a90faa65ba8f5d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "7 - Instance Segmentation and Panoptic Segmentation.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "7 - Instance Segmentation and Panoptic Segmentation"
+            }
+          },
+          {
+            "id": "949e14228660dea1",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "6 - Object Detection.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "6 - Object Detection"
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -163,31 +192,32 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "f3ec0f969341e237",
+  "active": "03a90faa65ba8f5d",
   "lastOpenFiles": [
-    "Pasted image 20250205103941.png",
-    "Pasted image 20250205103913.png",
-    "Pasted image 20250205102252.png",
-    "11 - Multi-modal 2D and 3D Object Detection.md",
+    "13 - Multiple Object Tracking and Motion Prediction.md",
     "12 - Visual Grounding, Anomaly Segmentation and Vehicle-to-Vehicle Communication.md",
-    "Pasted image 20250205092441.png",
-    "Pasted image 20250205092103.png",
-    "Pasted image 20250205090513.png",
-    "Pasted image 20250204185630.png",
-    "Pasted image 20250204183046.png",
-    "Pasted image 20250204154423.png",
-    "Pasted image 20250204154257.png",
-    "Pasted image 20250204154113.png",
-    "4 - Semantic Segmentation.md",
-    "6 - Object Detection.md",
-    "5 - Depth Estimation.md",
+    "11 - Multi-modal 2D and 3D Object Detection.md",
+    "10- Domain Adaptation.md",
+    "9 - 3D Reconstruction and Localization.md",
     "8 - Unimodal 3D Object Detection.md",
     "7 - Instance Segmentation and Panoptic Segmentation.md",
-    "9 - 3D Reconstruction and Localization.md",
-    "10- Domain Adaptation.md",
+    "6 - Object Detection.md",
+    "5 - Depth Estimation.md",
+    "4 - Semantic Segmentation.md",
+    "1-3 - Intro.md",
     "3 - Fundamental Computer Vision Architectures and Algorithmsfor Autonomous Cars (continued).md",
     "2 - Fundamental Computer Vision Architectures and Algorithmsfor Autonomous Cars.md",
-    "1 - Fundamentals of Autonomous Cars.md",
+    "Pasted image 20250206084412.png",
+    "Pasted image 20250205150906.png",
+    "Pasted image 20250205145432.png",
+    "Pasted image 20250205145347.png",
+    "Pasted image 20250205145249.png",
+    "Pasted image 20250205145149.png",
+    "Pasted image 20250205143129.png",
+    "Pasted image 20250205111019.png",
+    "Untitled.md",
+    "Pasted image 20250205103941.png",
+    "Pasted image 20250205103913.png",
     "Welcome.md"
   ]
 }
