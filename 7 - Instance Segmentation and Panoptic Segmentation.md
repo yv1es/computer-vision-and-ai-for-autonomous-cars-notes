@@ -49,7 +49,7 @@ Regress the offset of each pixel to its ground-truth instance centroid.
 $$ \mathcal{X} = \{x_1, \ldots, x_N\} $$
 $$ \mathcal{S} = \{S_1, \ldots, S_Z\} $$
 A **pixel** \(x_i\) is assigned to an instance \(S_k\) by learning to **point to its instance's spatial center**: 
-$$ C_k = \frac{1}{|S_k|} \sum_{x \in S_k} x $$
+$$C_k = \frac{1}{|S_k|} \sum_{x \in S_k} x$$
 
 
 There is a need to assign pixels to centroids uniquely. 
@@ -149,7 +149,7 @@ Improvements:
 2. do cross-attention before self attention in decoder block 
 3. pass higher resolution image features to transformer decoder
 4. $\mathcal{L}_{mask}$ in the matching loss is computed for every ground truth, prediction pair ($O(n^2)$. Use a approximation: 
-	1. Uniform sampling of points for the matching cost
+	1. uniform sampling of points for the matching cost
 	2. importance sampling for the final mask loss
 
 But still needs to be re-trained for different tasks. 

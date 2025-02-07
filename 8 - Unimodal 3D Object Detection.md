@@ -135,7 +135,7 @@ They progressively consolidate the vertical 3D dimension to only bird's eye view
 The BEW feature map is passed to the **region proposal network** (RPN). 
 
 ### Region proposal network 
-Is essentially the same [[6 - Object Detection#RoI Pooling]] as in [[6 - Object Detection#Fast R-CNN
+Is essentially the same [[6 - Object Detection#RPN]] as in [[6 - Object Detection#Fast R-CNN
 
 A typical [[4 - Semantic Segmentation#U-Net]] style encoder-decoder network. 
 

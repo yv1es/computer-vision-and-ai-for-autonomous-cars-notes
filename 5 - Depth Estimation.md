@@ -9,33 +9,13 @@ Standard regression problem, using mean squared error (MSE) loss.
 
 ## Metrics 
 Evaluating a predicted depth map **Y** and its ground truth depth image **Y\*** with **T** depth pixels.
-### Threshold
-The percentage of predictions \( y \) such that:
-$$
-\max\left(\frac{y_i}{y_i^*}, \frac{y_i^*}{y_i}\right) = \sigma < thr
-$$
-$\sigma = 1.25^i$ with $i \in \{1, 2, 3\}$ is common choice. 
-### Absolute Relative Difference
-The absolute relative difference is calculated as:
-$$
-\text{rel} = \frac{1}{T} \sum_{i,j} \frac{|y_{i,j} - y_{i,j}^*|}{y_{i,j}^*}
-$$
-### Squared Relative Difference
-The squared relative difference is defined as:
-$$
-\text{srel} = \frac{1}{T} \sum_{i,j} \frac{|y_{i,j} - y_{i,j}^*|^2}{y_{i,j}^*}
-$$
-### RMS (Linear)
-The root mean square error in linear space is:
-$$
-\text{RMS} = \sqrt{\frac{1}{T} \sum_{i,j} |y_{i,j} - y_{i,j}^*|^2}
-$$
-### RMS (Logarithmic)
-The root mean square error in logarithmic space is:
 
-$$
-\log_{10} = \sqrt{\frac{1}{T} \sum_{i,j} |\log y_{i,j} - \log y_{i,j}^*|^2}
-$$
+**Threshold**, the percentage of predictions \( y \) such that: $\max\left(\frac{y_i}{y_i^*}, \frac{y_i^*}{y_i}\right) = \sigma < thr$
+$\sigma = 1.25^i$ with $i \in \{1, 2, 3\}$ is common choice. 
+**Absolute relative difference**: $\text{rel} = \frac{1}{T} \sum_{i,j} \frac{|y_{i,j} - y_{i,j}^*|}{y_{i,j}^*}$
+**Squared relative difference**: $\text{srel} = \frac{1}{T} \sum_{i,j} \frac{|y_{i,j} - y_{i,j}^*|^2}{y_{i,j}^*}$
+**RMS** linear: $\text{RMS} = \sqrt{\frac{1}{T} \sum_{i,j} |y_{i,j} - y_{i,j}^*|^2}$
+**RMS** log: $log_{10} = \sqrt{\frac{1}{T} \sum_{i,j} |\log y_{i,j} - \log y_{i,j}^*|^2}$
 ## Ground Truth
 Often obtained using LiDAR. Or multi sensor fusion (SLAM)
 
@@ -108,14 +88,9 @@ Example of **middle fusion**, first process the modalities (RGB, depth) separate
 ## Simplified Stereo Model
 From the pinhole camera model: 
 ![[Pasted image 20250126101829.png]]
-$$x^w = \frac{bu}{D}$$
-$$y^w = \frac{bv}{D}$$
-$$z^w = \frac{bf}{D}$$
-where Disparity $D=u_l-u_r$ 
+$x^w = \frac{bu}{D}$   $y^w = \frac{bv}{D}$   $z^w = \frac{bf}{D}$  where Disparity $D=u_l-u_r$ 
 
-### Depth Resolution
-$$\Delta Z = \frac{Z^2}{bf}*\Delta D$$
-
+**Depth resolution**: $\Delta Z = \frac{Z^2}{bf}*\Delta D$
 ### Correspondences
 To compute D, the pixel correspondences between the left and right image are necessary. 
 This is traditionally done with SSD patch sliding. 

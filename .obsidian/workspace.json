@@ -4,11 +4,12 @@
     "type": "split",
     "children": [
       {
-        "id": "1fda9f5ba6bdb82f",
+        "id": "c62c17ed2aa20beb",
         "type": "tabs",
+        "dimension": 45.7129963898917,
         "children": [
           {
-            "id": "bd76eb7d6083594a",
+            "id": "9964419b959ae492",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -19,6 +20,27 @@
               },
               "icon": "lucide-file",
               "title": "7 - Instance Segmentation and Panoptic Segmentation"
+            }
+          }
+        ]
+      },
+      {
+        "id": "1fda9f5ba6bdb82f",
+        "type": "tabs",
+        "dimension": 54.28700361010831,
+        "children": [
+          {
+            "id": "2d49f5db6f80d951",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Cheatsheet.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Cheatsheet"
             }
           }
         ]
@@ -94,7 +116,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "4 - Semantic Segmentation.md",
+                "file": "10- Domain Adaptation.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +126,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for 4 - Semantic Segmentation"
+              "title": "Backlinks for 10- Domain Adaptation"
             }
           },
           {
@@ -113,12 +135,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "4 - Semantic Segmentation.md",
+                "file": "10- Domain Adaptation.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from 4 - Semantic Segmentation"
+              "title": "Outgoing links from 10- Domain Adaptation"
             }
           },
           {
@@ -128,7 +150,9 @@
               "type": "tag",
               "state": {
                 "sortOrder": "frequency",
-                "useHierarchy": true
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
               },
               "icon": "lucide-tags",
               "title": "Tags"
@@ -140,17 +164,21 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "4 - Semantic Segmentation.md"
+                "file": "10- Domain Adaptation.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 4 - Semantic Segmentation"
+              "title": "Outline of 10- Domain Adaptation"
             }
           }
-        ]
+        ],
+        "currentTab": 3
       }
     ],
     "direction": "horizontal",
-    "width": 300,
+    "width": 200,
     "collapsed": true
   },
   "left-ribbon": {
@@ -163,33 +191,33 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "bd76eb7d6083594a",
+  "active": "2d49f5db6f80d951",
   "lastOpenFiles": [
-    "Pasted image 20250206111806.png",
-    "6 - Object Detection.md",
     "7 - Instance Segmentation and Panoptic Segmentation.md",
-    "1-3 - Intro.md",
-    "Pasted image 20250206100710.png",
-    "12 - Visual Grounding, Anomaly Segmentation and Vehicle-to-Vehicle Communication.md",
-    "13 - Multiple Object Tracking and Motion Prediction.md",
+    "Cheatsheet.md",
     "11 - Multi-modal 2D and 3D Object Detection.md",
+    "Pasted image 20250207164601.png",
+    "Pasted image 20250207164539.png",
     "10- Domain Adaptation.md",
     "9 - 3D Reconstruction and Localization.md",
     "8 - Unimodal 3D Object Detection.md",
+    "6 - Object Detection.md",
     "5 - Depth Estimation.md",
+    "Pasted image 20250207142556.png",
+    "Pasted image 20250207142534.png",
+    "Pasted image 20250207142501.png",
+    "1-3 - Intro.md",
+    "Pasted image 20250207142410.png",
+    "Pasted image 20250207142022.png",
+    "Pasted image 20250207141947.png",
+    "Pasted image 20250207134641.png",
+    "Pasted image 20250207134612.png",
     "4 - Semantic Segmentation.md",
+    "12 - Visual Grounding, Anomaly Segmentation and Vehicle-to-Vehicle Communication.md",
+    "13 - Multiple Object Tracking and Motion Prediction.md",
     "3 - Fundamental Computer Vision Architectures and Algorithmsfor Autonomous Cars (continued).md",
     "2 - Fundamental Computer Vision Architectures and Algorithmsfor Autonomous Cars.md",
-    "Pasted image 20250206084412.png",
-    "Pasted image 20250205150906.png",
-    "Pasted image 20250205145432.png",
-    "Pasted image 20250205145347.png",
-    "Pasted image 20250205145249.png",
-    "Pasted image 20250205145149.png",
-    "Pasted image 20250205143129.png",
-    "Pasted image 20250205111019.png",
     "Untitled.md",
-    "Pasted image 20250205103941.png",
     "Welcome.md"
   ]
 }

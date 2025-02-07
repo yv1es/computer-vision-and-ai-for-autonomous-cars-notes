@@ -12,7 +12,7 @@ False Negative $\Leftrightarrow$ mission detection
 
 ## Average Precision (AP)
 
-$AP[class, iou]$ average precision for specific class ans IoU threhold. 
+$AP[class, iou]$ average precision for specific class and IoU threhold. 
 	1. Rank all predictions for $class$ according to their confidence
 	2. Predictions are correct then IoU > $iou$ (thresholding)
 	3. Build precision (y) - recall (x) curve
@@ -128,7 +128,7 @@ Use this to find an minimal cost matching using the Hungarian algorithm.
 
 Then use the found matching to define the **final training loss $\mathcal{L}_{Hungarian}$** 
 ![[Pasted image 20250201155823.png]]
-Notice that for the matching cost the prediction probability is not logged, to keep its value in the same range as the $\mathcal{L}_{box}$ regression loss. Then for the final training loss the log is added. 
+Notice that for the matching cost the prediction probability is not log-ed, to keep its value in the same range as the $\mathcal{L}_{box}$ regression loss. Then for the final training loss the log is added. 
 
 
 ## Detection Transformer (DETR)

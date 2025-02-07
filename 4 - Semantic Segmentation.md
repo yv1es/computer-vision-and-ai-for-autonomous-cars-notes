@@ -51,7 +51,10 @@ There are three fundamental differences of HRNet from low-resolution classificat
 1. High- and low-resolution convolutional layers are connected in parallel rather than in series.
 2. High resolution is maintained throughout the entire network instead of recovering high resolution from low resolution.
 3. Multi-resolution representations are fused repeatedly, rendering rich high-resolution representations with strong position sensitivity.
+
+Downsampling uses strided convolution. 
 ![[Pasted image 20250125155241.png]]
+
 
 On **Cityscapes** ![[Pasted image 20250125155356.png]]
 
