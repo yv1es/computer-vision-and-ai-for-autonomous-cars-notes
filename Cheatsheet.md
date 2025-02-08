@@ -1,26 +1,3 @@
-
-
-###### Etc
-**Compute mean** $\mu_j=\frac{1}{N}\sum_{i=1}^N x_{ij}$  
-**Compute stdev** $\sigma_j=\sqrt{\frac{1}{N-1}\sum_{i=1}^N\bigl(x_{ij}-\mu_j\bigr)^2}$  
-**Sigmoid** $\sigma(x) = \frac{1}{1 + exp(-x)}$  
-**Softmax** $softmax(z)_i = \frac{exp(z_i)}{\Sigma_jexp(z_j)}$ 
-**Cross Entropy Loss:** $-\Sigma_{x \in classes} y(x)log(p(x))$ 
-**SGD with momentum** ($\alpha$  slightly below 1): 
-$\mathbf{v} \leftarrow \alpha \mathbf{v} - (1 - \alpha) \eta \nabla_\theta \left( \frac{1}{B} \sum_{i=1}^B \mathcal{L}(f(x_i; \theta), y_i) \right)$ with $\theta \leftarrow \theta + \mathbf{v}$
-**Kaiming initialzation:** 0-mean Gaussian with stddev = $\sqrt{2/d_{l-1}}$ 
-**Batch Norm. (BN):** First each unit is normalized (subtract mean and divide by variance of the mini-batch). Then secondly scale (by $\gamma$) and shift (by $\beta$) (learnable $\gamma, \beta$).  
-**Conv** $y[p,q]=\sum_{i=1}^m\sum_{j=1}^n w[i,j]\,x[p+i-1,q+j-1],\;p=1\ldots H-m+1,\;q=1\ldots W-n+1$  
-**T. Conv** $y[p,q]=\sum_{i\in I}\sum_{j\in J}x[i,j]\,w[p-i+1,q-j+1],\;p=1\ldots H+m-1,\;q=1\ldots W+n-1$  
-**Conv. output dimension:** $\lfloor \frac{H + 2P - k}{s} \rfloor + 1$   
-**Attention:** $X_l = \text{softmax}(Q_l K_l^\top) V_l + X_{l-1}$   
-**Masked:** $X_l = \text{softmax}(\mathcal{M}_{l-1} + Q_l K_l^\top) V_l + X_{l-1}$  w. $\mathcal{M}_{l-1}(x, y) = \begin{cases} 0 & \text{if } \mathbf{M}_{l-1}(x, y) = 1 \\ -\infty & \text{otherwise} \end{cases}$
-**berHu Loss:** $B(x)=\begin{cases}|x|,&|x|\le c\\ \tfrac{x^2+c^2}{2c},&|x|>c\end{cases}$ with $c=\tfrac{1}{5}\max_i|\tilde{y}_i - y_i|$.  
-**Huber Loss:** $= 0.5x^2 \text{ if } |x| < 1, \, |x| - 0.5 \text{ otherwise}$
-**Polar**: $\begin{bmatrix} x \\ y \\ z \end{bmatrix} = \begin{bmatrix} r \cos \alpha \cos \epsilon \\ r \sin \alpha \cos \epsilon \\ r \sin \epsilon \end{bmatrix}$ elevation $\epsilon$  azimuth $\alpha$ 
-**Simplified stereo model** $x^w = \frac{bu}{D}$   $y^w = \frac{bv}{D}$   $z^w = \frac{bf}{D}$  where Disparity $D=u_l-u_r$ 
-**Depth resolution**: $\Delta Z = \frac{Z^2}{bf}*\Delta D$
-**Precision** $= \frac{\text{TP}}{\text{TP} + \text{FP}}$      **Recall** $= \frac{\text{TP}}{\text{TP} + \text{FN}}$
 ##### Self Driving Levels
 **1** Feet off   **2** Hands off  **3** Eyes off  **4** Mind off  **5** Mind off, No ODD restriction 
 ###### LiDAR
@@ -183,18 +160,30 @@ $\mathcal{L}_{I \to J \to I} = \| \mathbf{V} \cdot (\hat{\mathbf{F}}_{I \to J} +
 **UAWarpC** models per-pixel 2D warps with heteroscedastic Gaussian uncertainty:  
 $p(\mathbf{W}\mid I,I')=\mathcal{N}\bigl(\mathbf{W};\hat{\mathbf{F}}_{I'\to I},\hat{\Sigma}_{I'\to I}\bigr),\quad p(\mathbf{W}\mid I,J,I')=\mathcal{N}\bigl(\mathbf{W};\hat{\mathbf{F}}_{I'\to J\to I},\hat{\Sigma}_{I'\to J\to I}\bigr).$  
 **Warp net** is trained by maximizing warp log-likelihood. A pixel-level **confidence** $C(I_1,I_2)=1-\exp\!\bigl(-r^2/2\,\sigma_{I_2\to I_1}^2\bigr)$ helps downweight non-corresponding regions and trust high-uncertainty predictions less.  
-###### Test-time DA - TENT Adaptively compute the mean and variance for BA over the test batch. 
+###### Test-time DA - TENT 
+Adaptively compute the mean and variance for BA over the test batch. 
 ##### Multi-modal Object Detection
-**Frustum PointNet**: reduce search space to 2D CNN box prediction
-**MV3D**: project pcd to BEV and fuses with camera view
-**PointPainting**: use semseg model and project semantic features onto points in the pcd
-**MVX-Net**: use VGG OD features not semseg **Mid-level MVX-Net**: fusion at voxel stage, project voxels onto image, pool image features and concat with voxel feature.
-**PointAugmenting**: uses more local feature and does input and mid voxel fusion
-**TransFusion:** mid-level lidar-camera fusion with soft association via cross attention. Predict BEV heatmap, select top candidates as Quries. Max pool image features over column (collapse height), exract keys and values from it.   **SMCA**: project query position from BEV space to the 2D camera view: $(c_x, c_y)$. Multiply cross-attention map element-wise with a soft Gaussian mask $M_{ij} = \exp(\left(-(i - c_x)^2 + (j - c_y)^2) / \sigma r^2\right)$
-**AVOD**: project 3D anchor box grid into input image and BEV input and RoI pool. (mid fustion). Then again combine proposals with BEV and image features and refine the top k candidates (late fusion) **CLOC (pure late fusion)**: $k$ 2D predictions and $n$ 3D predictions. When there is high IoU fill the entry of a $k \times n \times 4$ tensor with (IoU, the 2 confidences, distance to the box) the 4 dim features are processed by a MLP to 1 dim. Max pool over $k$ for the final $n$ confidences.
-**CenterFusion**: take closest **radar** pillar which intersects with the frustum and concatenate image features with radial velocity (in x, y) and the depth from radar. 
+###### Frustum PointNet
+Reduce search space to 2D CNN box prediction
+###### MV3D 
+Project pcd to BEV and fuses with camera view
+###### PointPainting
+Use semseg model and project semantic features onto points in the pcd
+###### MVX-Net 
+Use VGG OD features not semseg 
+**Mid-level MVX-Net**: fusion at voxel stage, project voxels onto image, pool image features and concat with voxel feature.
+**PointAugmenting**: uses more local image features and does input and mid voxel fusion
+###### TransFusion
+Mid-level lidar-camera fusion with soft association via cross attention. Predict BEV heatmap, select top candidates as Quries. Max pool image features over column (collapse height), exract keys and values from it.   **SMCA**: project query position from BEV space to the 2D camera view: $(c_x, c_y)$. Multiply cross-attention map element-wise with a soft Gaussian mask $M_{ij} = \exp(\left(-(i - c_x)^2 + (j - c_y)^2) / \sigma r^2\right)$
+###### AVOD
+Project 3D anchor box grid into input image and BEV input and RoI pool. (mid fustion). Then again combine proposals with BEV and image features and refine the top k candidates (late fusion) 
+###### CLOC (pure late fusion)
+$k$ 2D predictions and $n$ 3D predictions. When there is high IoU fill the entry of a $k \times n \times 4$ tensor with (IoU, the 2 confidences, distance to the box) the 4 dim features are processed by a MLP to 1 dim. Max pool over $k$ for the final $n$ confidences.
+###### CenterFusion
+Take closest **radar** pillar which intersects with the frustum and concatenate image features with radial velocity (in x, y) and the depth from radar. 
 $F_{x,y,i}^j = 1/ M_i \begin{cases} f_i, & |x - c_x^j| \leq \alpha w^j \text{ and } |y - c_y^j| \leq \alpha h^j \\ 0, & \text{otherwise} \end{cases}$
-**CRF-Net: camera radar 2D detection**:  Project radar detection as 3 meter pillar into image, add channel with distance and cross section. The radar channels are added at different depths of the VGG encoder. Use **BlackIn** (deactivate image input with prob 0.2) to increase dependence on radar features. 
+###### CRF-Net: camera radar 2D detection 
+Project radar detection as 3 meter pillar into image, add channel with distance and cross section. The radar channels are added at different depths of the VGG encoder. Use **BlackIn** (deactivate image input with prob 0.2) to increase dependence on radar features. 
 ###### Robust fusion 
 **Local patch-level measurement entropy**  
 $p_i^{mn}=\frac{1}{MN}\sum_{j=1}^M\sum_{k=1}^N \delta\bigl(I(m+j,n+k)-i\bigr),\quad i=0\ldots255.$   $\rho^{mn}=\sum_{i=0}^{255}p_i^{mn}\log\bigl(p_i^{mn}\bigr).$  
@@ -204,3 +193,68 @@ Higher patch entropy $\rightarrow$ higher SNR.
 **2.** Convolve + sigmoid $\rightarrow$ weights in $[0,1]$.   **3.** Pointwise multiply concatenated features by entropy-derived weights (amplify/attenuate).  **4.** Concatenate initial entropy with scaled features for subsequent detection layers.
 **HRFuser:** extends HRNet for multi-modality (camera primary, others additional).
 Parallel branches for camera modality. Multi-Window Cross-Attention (**MWCA**) fuses features across modalities.
+##### Visual Grounding
+**Grounding-by-detection**: Language backbone + 3D visual backbone → proposals → verbo-visual fusion outputs box confidences.  
+###### 3DVG-T
+Transformer-based cross-attention between L word embeddings and M 3D proposal embeddings, interleaving self- & cross-attn so proposals/words co-inform each other.  
+###### MVT-3DVG
+Multi-view point cloud transformer. Rotate scene $N$ times about the vertical axis, encode each version, then fuse via a permutation-invariant function. **More efficient decoupled:** point-level feature extraction done once, object-level features get multiple positional embeddings across views.  
+###### ConcreteNet
+Adds a camera position token with $\mathcal{L}_{\text{camera}} = \| \mathbf{t} - \mathbf{t}^* \|$  Fed to the **Bottom-up attentive fusion**: repeated self- and cross attention with 3D candidate queries.  Attention is spherically masked: $M_l(i, j) = \begin{cases} 0, & \text{if } \| \mathbf{o}_i - \mathbf{o}_j \| < r_l \\ -\infty, & \text{otherwise} \end{cases}$     Contrastive learning with language embedding as the anchor and instances as samples. $\mathcal{L}_{\text{contrast}}(e_s, \{ e_{i,k} \}) = -\log \frac{\exp(d(e_s, e_{i,k^*}) / \tau)}{\sum_k \exp(d(e_s, e_{i,k}) / \tau)}$
+##### Anomaly segmentation
+###### Baysian DeepLab (discriminative)
+**Uncertainty** = Epistemic (model) + Aleatory (data). For anomaly segmentation, we focus on epistemic. A single forward pass can’t reveal epistemic uncertainty → use Monte Carlo (dropout) with $T$ passes.
+**Predictive Entropy** (total uncertainty): $H(y\mid x) = -\sum_{c}\Bigl(\frac{1}{T}\sum_{t}y_{c}^{t}\Bigr)\log\bigl(\tfrac{1}{T}\sum_{t}y_{c}^{t}\bigr)$
+**Epistemic Uncertainty** (mutual info): $I(y,w\mid x) = H(y\mid x)\;-\;\frac{1}{T}\sum_{c,t}y_{c}^{t}\,\log y_{c}^{t}$
+###### Image resynthesis (generative)
+Train GAN to resynthesize input images from segmentation (outliers will be poorly reconstructed). Train **discrepancy network** (U-Net style) to detect inconsistencies. Train with synthetic outliers added to data. 
+##### V2VNet: vehicle to vehicle communication
+Transmit and receive intermediate LiDAR features from other agents. Trade-off between raw data (high bandwidth) and final BBox (low information) transmission. 
+
+##### Multiple object tracking (MOT)
+###### Metrics
+**Mostly tracked - MT:** Ground-truth traj. tracked in ≥80% of frames. 
+**Fragments:** Hypotheses covering ≤80% of a trajectory. 
+**Mostly lost - ML:** Ground-truth trajectories tracked in <20% of frames. 
+**False trajectories:** Hypotheses that don’t match any real object. 
+**ID switches:** Instances where a tracked object’s ID is changed erroneously.
+###### Multiple Object Tracking Accuracy (MOTA)
+**Matching:** Object - prediction match when $IoU ≥0.5$. Objects remain matched over frames when the have $IoU ≥0.5$ also in the next frame. Remaining object are then paired.  
+**FN:** Ground-truth boxes with no matching hypothesis. **FP:** Hypotheses with no matching ground-truth box. **IDSW:** Incorrect ID changes for tracked objects.
+**MOTA**  $= 1 - (FN + FP + IDSW)/GT, \quad MOTA \in (-\infty, 1]$
+###### Baseline
+Off-the-shelf detector with Kalman filter and Hungarian algorithm
+###### Siamese CNN for MOT
+Extract detection pairs $(I_1, O_1)$ & $(I_2, O_2)$ (appearance, optical flow). Pass through Siamese conv layers $\rightarrow$ deep features. Positives: same GT track, close frames; negatives: diff track/false pos. Final classifier (e.g., grad boosting) fuses Siamese + context (size/pos) $\rightarrow$ matching score in $[0,1]$.
+**Data assoc:**   Let $\mathcal{D}=\{\mathbf{d}_i^t\}$ (all detections), $\mathcal{T}_k$ = ordered detections. Solve LP (max-flow) minimizing   $\min_{\{f(i), f(i,j)\}} \sum_i C_{\mathrm{in}}(i) f_{\mathrm{in}}(i) + \sum_i C_{\mathrm{out}}(i) f_{\mathrm{out}}(i) + \sum_i C_{\mathrm{det}}(i) f(i) + \sum_{i,j} C(i,j) f(i,j)$ 
+where $C(i,j)$ comes from Siamese score $s_{i,j}^{\mathrm{RF}}$ and $f(i,j)=1$ if linked; flow constraints $\rightarrow$ valid trajectories.
+###### MOTR
+Like DETR, but there are detect and track queries. Detect queries become track queries when the confidence is high enough. Detect queries learn to ignore tracked objects. 
+Traind by aggregation of DETR loss over video frames. 
+##### Motion prediction
+###### CNN based
+Render BEV with car of interest in the center. Different ways to handle temporal data: 
+**1.** RNN-Decoder **2.** Render past data in frame **3.** pass past state to output MLP (late fusion) **4.** Input multiple frames to a 3D CNN
+###### RNN based
+Directly use car positions with LSTM encoder decoder. Add social interaction layer. 
+###### Etc
+**Compute mean** $\mu_j=\frac{1}{N}\sum_{i=1}^N x_{ij}$  
+**Compute stdev** $\sigma_j=\sqrt{\frac{1}{N-1}\sum_{i=1}^N\bigl(x_{ij}-\mu_j\bigr)^2}$  
+**Sigmoid** $\sigma(x) = \frac{1}{1 + exp(-x)}$  
+**Softmax** $softmax(z)_i = \frac{exp(z_i)}{\Sigma_jexp(z_j)}$ 
+**Cross Entropy Loss:** $-\Sigma_{x \in classes} y(x)log(p(x))$ 
+**SGD with momentum** ($\alpha$  slightly below 1): 
+$\mathbf{v} \leftarrow \alpha \mathbf{v} - (1 - \alpha) \eta \nabla_\theta \left( \frac{1}{B} \sum_{i=1}^B \mathcal{L}(f(x_i; \theta), y_i) \right)$ with $\theta \leftarrow \theta + \mathbf{v}$
+**Kaiming initialzation:** 0-mean Gaussian with stddev = $\sqrt{2/d_{l-1}}$ 
+**Batch Norm. (BN):** First each unit is normalized (subtract mean and divide by variance of the mini-batch). Then secondly scale (by $\gamma$) and shift (by $\beta$) (learnable $\gamma, \beta$).  
+**Conv** $y[p,q]=\sum_{i=1}^m\sum_{j=1}^n w[i,j]\,x[p+i-1,q+j-1],\;p=1\ldots H-m+1,\;q=1\ldots W-n+1$  
+**T. Conv** $y[p,q]=\sum_{i\in I}\sum_{j\in J}x[i,j]\,w[p-i+1,q-j+1],\;p=1\ldots H+m-1,\;q=1\ldots W+n-1$  
+**Conv. output dimension:** $\lfloor \frac{H + 2P - k}{s} \rfloor + 1$   
+**Attention:** $X_l = \text{softmax}(Q_l K_l^\top) V_l + X_{l-1}$   
+**Masked:** $X_l = \text{softmax}(\mathcal{M}_{l-1} + Q_l K_l^\top) V_l + X_{l-1}$  w. $\mathcal{M}_{l-1}(x, y) = \begin{cases} 0 & \text{if } \mathbf{M}_{l-1}(x, y) = 1 \\ -\infty & \text{otherwise} \end{cases}$
+**berHu Loss:** $B(x)=\begin{cases}|x|,&|x|\le c\\ \tfrac{x^2+c^2}{2c},&|x|>c\end{cases}$ with $c=\tfrac{1}{5}\max_i|\tilde{y}_i - y_i|$.  
+**Huber Loss:** $= 0.5x^2 \text{ if } |x| < 1, \, |x| - 0.5 \text{ otherwise}$
+**Polar**: $\begin{bmatrix} x \\ y \\ z \end{bmatrix} = \begin{bmatrix} r \cos \alpha \cos \epsilon \\ r \sin \alpha \cos \epsilon \\ r \sin \epsilon \end{bmatrix}$ elevation $\epsilon$  azimuth $\alpha$ 
+**Simplified stereo model** $x^w = \frac{bu}{D}$   $y^w = \frac{bv}{D}$   $z^w = \frac{bf}{D}$  where Disparity $D=u_l-u_r$ 
+**Depth resolution**: $\Delta Z = \frac{Z^2}{bf}*\Delta D$
+**Precision** $= \frac{\text{TP}}{\text{TP} + \text{FP}}$      **Recall** $= \frac{\text{TP}}{\text{TP} + \text{FN}}$
