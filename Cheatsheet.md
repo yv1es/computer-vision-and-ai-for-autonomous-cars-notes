@@ -42,6 +42,8 @@ $G:$ gain, $\sigma:$ radar cross section, $A_e:$ aperture, $L:$ loss factor
 **Ordinal Loss**  $L(x,\Theta)=-\tfrac{1}{N}\sum_{w=0}^{W-1}\sum_{h=0}^{H-1}\Bigl[\sum_{k=0}^{l(w,h)-1}\log(\mathcal{P}^{k}_{(w, h)})+\sum_{k=l(w,h)}^{K-1}\log\bigl(1-\mathcal{P}^{k}_{(w, h)}\bigr)\Bigr].$
 **Inference**  $\hat{l}(w,h)=\sum_{k=0}^{K-1}\eta\bigl(\mathcal{P}^{k}_{(w, h)}\ge0.5\bigr),\;\hat{d}(w,h)=t_{\hat{l}(w,h)}+t_{\hat{l}(w,h)+1} / 2.$
 with probability that prediction is larger than ordinal value } k $= \mathcal{P}^{k}_{(w, h)} = P\left(\hat{\ell}(w, h) > k \,|\, \chi, \Theta \right) = (e^{\mathcal{Y}(w, h, 2k)}) / (e^{\mathcal{Y}(w, h, 2k)} + e^{\mathcal{Y}(w, h, 2k+1)})$
+
+
 ###### P3Dept
 Exploit piecewise planarity. Predict plane coeffs $C(u,v)$ instead of depth $D(u,v)$, grouping pixels on the same 3D plane.  
 **Plane eq**: $n\cdot P + d=0,\;n=(a,b,c)$, point $P=(X,Y,Z)$ from pinhole model $Z=D(u,v),\;X=\frac{Z(u-u_0)}{f_x},\;Y=\frac{Z(v-v_0)}{f_y}$.  
@@ -167,5 +169,32 @@ $\mathcal{L}_{\text{cyc}} = \mathbb{E}_{I_s \sim X_S}[\| G_{T \to S}(G_{S \to T}
 $\mathcal{L}_{\text{GAN,feat}} = \mathbb{E}_{I_t \sim X_T}[\log D_{\text{feat}}(f_T(I_t))] + \mathbb{E}_{I_s \sim X_S}[\log(1 - D_{\text{feat}}(f_T(G_{S \to T}(I_s))))]$
 **CISS**: train images $(I_S, I_T)$ and stylized versions $(I_{S \rightarrow T}, I_{S \rightarrow T})$ are passed through siamese network.  $\mathcal{L}_{\text{inv}}(F, I, I') = \frac{1}{DMN} \|\phi(I) - \phi(I')\|_F^2$  
 $\mathcal{L}_{\text{CISS}} = \mathcal{L}_{\text{CE}}(F, I_s, Y_s) + \mathcal{L}_{\text{CE}}(F, I_t, \hat{Y}_t) + \lambda_s \mathcal{L}_{\text{inv}}(F, I_s, I_{s \to t}) + \lambda_t \mathcal{L}_{\text{inv}}(F, I_t, I_{t \to s})$
+**CMA (source free, unlabeled S-T pairs)**: extract features of S-T pair with ENC. Align patches of S-T pair, average over features for patch features. An S patch is the anchor, the matching T patch the positive.  $\mathcal{L}_{\text{cdc}, i} = -\log \frac{\exp(\mathbf{a}_i^\top \mathbf{p}_i / \tau)}{\exp(\mathbf{a}_i^\top \mathbf{p}_i / \tau) + \sum_{j=1}^M \exp(\mathbf{a}_i^\top \mathbf{n}_j / \tau)}$
+$\mathcal{L}_{\text{cdc}} = \frac{\sum_i \mathcal{L}_{\text{cdc}, i} [\bar{c}_i \geq 0.2]}{\sum_i [\bar{c}_i \geq 0.2]}$ use only patches with avg. confidence > 0.2 
+###### Output level adaptation
+**AdaptSegNet**: CyCADA but with per pixel output discriminator.  $\mathcal{L}_{\text{adv}, D} = \mathbb{E}_{I_s \sim X_S} \left[ \sum_{h, w} \log D(P_s)(h, w) \right] + \mathbb{E}_{I_t \sim X_T} \left[ \sum_{h, w} \log \left( 1 - D(P_t)(h, w) \right) \right]$
+$\mathcal{L}_{\text{adv}, f} = \mathbb{E}_{I_t \sim X_T} \left[ \sum_{h, w} \log \left( 1 - D(P_t)(h, w) \right) \right]$
 
-**CMA (source free, unlabeled S-T pairs)**: align patches of S-T pair
+# TODO self training
+
+**DACS**: create artificial mixed (S-T) images for training. 
+**Probabilistic learned warping for output alignment**: from images $I, J$ generate $I'$ with $W^{-1}$. Predict $\mathbf{F_{I'\rightarrow I}}, \mathbf{F_{J\rightarrow I}}, \mathbf{F_{I\rightarrow J}}$  Train: $\mathcal{L}_{I \to I} = \| \hat{\mathbf{F}}_{I \to I} - \mathbf{W} \|^2$
+$\mathcal{L}_{I \to J \to I} = \| \mathbf{V} \cdot (\hat{\mathbf{F}}_{I \to J} + \Phi \hat{\mathbf{F}}_{J \to I} (\hat{\mathbf{F}}_{J \to I}) - \mathbf{W}) \|^2 = \| \mathbf{V} \cdot (\hat{\mathbf{F}}_{I \to J \to I} - \mathbf{W}) \|^2$
+**UAWarpC** models per-pixel 2D warps with heteroscedastic Gaussian uncertainty:  
+$p(\mathbf{W}\mid I,I')=\mathcal{N}\bigl(\mathbf{W};\hat{\mathbf{F}}_{I'\to I},\hat{\Sigma}_{I'\to I}\bigr),\quad p(\mathbf{W}\mid I,J,I')=\mathcal{N}\bigl(\mathbf{W};\hat{\mathbf{F}}_{I'\to J\to I},\hat{\Sigma}_{I'\to J\to I}\bigr).$  
+**Warp net** is trained by maximizing warp log-likelihood. A pixel-level **confidence** $C(I_1,I_2)=1-\exp\!\bigl(-r^2/2\,\sigma_{I_2\to I_1}^2\bigr)$ helps downweight non-corresponding regions and trust high-uncertainty predictions less.  
+###### Test-time DA - TENT
+Adaptively compute the mean and variance for BA over the test batch. 
+
+##### Multi-modal 3D Object Detection
+**Frustum PointNet**: reduce search space to 2D CNN box prediction
+**MV3D**: project pcd to BEV and fuses with camera view
+**PointPainting**: use semseg model and project semantic features onto points in the pcd
+**MVX-Net**: use VGG OD features not semseg **Mid-level MVX-Net**: fusion at voxel stage, project voxels onto image, pool image features and concat with voxel feature.
+**PointAugmenting**: uses more local feature and does input and mid voxel fusion
+**TransFusion:** mid-level lidar-camera fusion with soft association via cross attention. Predict BEV heatmap, select top candidates as Quries. Max pool image features over column (collapse height), exract keys and values from it.   **SMCA**: project query position from BEV space to the 2D camera view: $(c_x, c_y)$. Multiply cross-attention map element-wise with a soft Gaussian mask $M_{ij} = \exp(\left(-(i - c_x)^2 + (j - c_y)^2) / \sigma r^2\right)$
+**AVOD**: project 3D anchor box grid into input image and BEV input and RoI pool. (mid fustion). Then again combine proposals with BEV and image features and refine the top k candidates (late fusion) **CLOC (pure late fusion)**: $k$ 2D predictions and $n$ 3D predictions. When there is high IoU fill the entry of a $k \times n \times 4$ tensor with (IoU, the 2 confidences, distance to the box) the 4 dim features are processed by a MLP to 1 dim. Max pool over $k$ for the final $n$ confidences.
+**CenterFusion**: take closest **radar** pillar which intersects with the frustum and concatenate image features with radial velocity (in x, y) and the depth from radar. 
+$F_{x,y,i}^j = 1/ M_i \begin{cases} f_i, & |x - c_x^j| \leq \alpha w^j \text{ and } |y - c_y^j| \leq \alpha h^j \\ 0, & \text{otherwise} \end{cases}$
+##### Multi-modal 2D Object Detection
+**CRF-Net: camera radar 2D detection**: 

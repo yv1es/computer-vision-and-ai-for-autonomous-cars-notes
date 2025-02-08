@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "10- Domain Adaptation.md",
+                "file": "11 - Multi-modal 2D and 3D Object Detection.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "10- Domain Adaptation"
+              "title": "11 - Multi-modal 2D and 3D Object Detection"
             }
           }
         ]
@@ -191,9 +191,9 @@
   },
   "active": "4251e7d02f5b72f9",
   "lastOpenFiles": [
+    "11 - Multi-modal 2D and 3D Object Detection.md",
     "Cheatsheet.md",
     "10- Domain Adaptation.md",
-    "11 - Multi-modal 2D and 3D Object Detection.md",
     "12 - Visual Grounding, Anomaly Segmentation and Vehicle-to-Vehicle Communication.md",
     "13 - Multiple Object Tracking and Motion Prediction.md",
     "9 - 3D Reconstruction and Localization.md",
