@@ -146,5 +146,26 @@ Render loss is $\|\hat{C}(r)-C_{\text{gt}}(r)\|^2$.
 $\gamma(p)=\bigl(\sin(2^0\pi p),\,\cos(2^0\pi p),\,\dots,\sin(2^{L-1}\pi p),\,\cos(2^{L-1}\pi p)\bigr).$  
 **NeRF in the wild** splits scene into: **Static** density $\sigma$, color that can depend on an input appearance embedding. **Transient** density/color for dynamic objects, controlled by a transient embedding.  
 **Block-NeRF**: Splits large driving scenes into sub-NeRFs (e.g., per intersection). **Visibility Predictor:** Each sub-NeRF uses fv(x,d)f_v(x, d) to model transmittance. **Training:** Masks dynamic objects via semantic segmentation. **Inference:** Combines sub-NeRF outputs with distance-based weights wi∼d(c,xi)−pw_i \sim d(c, x_i)^{-p} and visibility. **Transition Handling:** Discards sub-NeRFs with low mean visibility for smooth transitions.
-
 ##### Domain adaptation
+**Unsupervised DA** Source: labeled data  Target: unlabeled data
+**Weakly supervised DA** Source: labeled data Target: unlabeled data with correspondences
+**Source-free DA (model adaption)** Source: pretrained model  Target: unlabeled data
+**Test-time or online DA** Source: pretrained model Target: unlabeled sequential test data
+**Domain generalization** Source: labeled data  Target: none, no adaptation at test time
+###### Input level DA
+**Fog simulation** **1.** compute depth estimate (via plane fitting, outlier filtering) **2.** transmittance $\tilde{t}(x)=exp(-\alpha\,\ell(x))$ **3.** apply fog model $I(x)=R(x)\,\tilde{t}(x)+L\bigl(1-\tilde{t}(x)\bigr)$.
+Atmospheric light $L$, attenuation coeff. $\alpha$ Can be enhanced with bilateral filtering and color and semantics from labels.  $\mathbf{t}(\mathbf{p}) = \frac{\sum_{\mathbf{q} \in \mathcal{N}(\mathbf{p})} G_{\sigma_s}(\|\mathbf{q} - \mathbf{p}\|) \bigl[\delta(h(\mathbf{q}) - h(\mathbf{p})) + \mu G_{\sigma_c}(\|\mathbf{R}(\mathbf{q}) - \mathbf{R}(\mathbf{p})\|)\mathbf{t}(\mathbf{q})\bigr]}{\sum_{\mathbf{q} \in \mathcal{N}(\mathbf{p})} G_{\sigma_s}(\|\mathbf{q} - \mathbf{p}\|) \bigl[\delta(h(\mathbf{q}) - h(\mathbf{p})) + \mu G_{\sigma_c}(\|\mathbf{R}(\mathbf{q}) - \mathbf{R}(\mathbf{p})\|)\bigr]}$
+**Rain simulation** Uses fog-like attenuation:  $t(x)=e^{-0.312\,R^{0.67}\,\ell(x)}$ (rainfall rate $R$ in mm/h, distance $\ell(x)$). Then $I_{att}(x)=R(x)\,t(x)+L\bigl(1-t(x)\bigr)$.   **Rain streak photometry**: $S'=S\bigl(0.94\,\mathbf{F}+0.06\,\mathbf{E}\bigr)$, combining refraction/reflection from environment map.  
+Alpha compositing: $\mathbf{I}_{\text{rain}}(\mathbf{x}) = \mathbf{I}_{\text{att}}(\mathbf{x}) \frac{T - S'_\alpha(\mathbf{x})T}{T} + S'(\mathbf{x})$ (exposure $T$, streak duration $\tau$).
+**LiDAR Snowfall** $P_{R,\text{snow}}(R) = P_{R,\text{snow}}^0(R) + \sum_{j=1}^n P_{R,\text{snow}}^j(R)$
+**CycleGAN:** Train two conditional GANs $F: S \rightarrow T$ and $G: T \rightarrow S$ add  $|| G(F(x)) -  x ||$ to  optimization **FDA** replaces low-freq amplitude of the source with that of the target. Define a low-pass mask $M_\beta(h,w)=1_{(h,w)\in[-\beta H:\beta H]\times[-\beta W:\beta W]}$. Then  
+$I_{s\to t}=\mathcal{F}^{-1}\bigl(\bigl(M_\beta\,\mathcal{F}^A(I_t)+(1-M_\beta)\,\mathcal{F}^A(I_s)\bigr),\,\mathcal{F}^P(I_s)\bigr).$
+###### Feature level DA 
+**CyCADA**: models $f_S, f_T$   generators $G_{S \rightarrow T}, G_{T \rightarrow S}$   discriminators $D_T, D_{feat}$ 
+$\mathcal{L}_{\text{GAN}} = \mathbb{E}_{I_t \sim X_T}[\log D_T(I_t)] + \mathbb{E}_{I_s \sim X_S}[\log(1 - D_T(G_{S \to T}(I_s)))]$
+$\mathcal{L}_{\text{cyc}} = \mathbb{E}_{I_s \sim X_S}[\| G_{T \to S}(G_{S \to T}(I_s)) - I_s \|_1] + \mathbb{E}_{I_t \sim X_T}[\| G_{S \to T}(G_{T \to S}(I_t)) - I_t \|_1]$
+$\mathcal{L}_{\text{GAN,feat}} = \mathbb{E}_{I_t \sim X_T}[\log D_{\text{feat}}(f_T(I_t))] + \mathbb{E}_{I_s \sim X_S}[\log(1 - D_{\text{feat}}(f_T(G_{S \to T}(I_s))))]$
+**CISS**: train images $(I_S, I_T)$ and stylized versions $(I_{S \rightarrow T}, I_{S \rightarrow T})$ are passed through siamese network.  $\mathcal{L}_{\text{inv}}(F, I, I') = \frac{1}{DMN} \|\phi(I) - \phi(I')\|_F^2$  
+$\mathcal{L}_{\text{CISS}} = \mathcal{L}_{\text{CE}}(F, I_s, Y_s) + \mathcal{L}_{\text{CE}}(F, I_t, \hat{Y}_t) + \lambda_s \mathcal{L}_{\text{inv}}(F, I_s, I_{s \to t}) + \lambda_t \mathcal{L}_{\text{inv}}(F, I_t, I_{t \to s})$
+
+**CMA (source free, unlabeled S-T pairs)**: align patches of S-T pair
