@@ -183,10 +183,8 @@ $\mathcal{L}_{I \to J \to I} = \| \mathbf{V} \cdot (\hat{\mathbf{F}}_{I \to J} +
 **UAWarpC** models per-pixel 2D warps with heteroscedastic Gaussian uncertainty:  
 $p(\mathbf{W}\mid I,I')=\mathcal{N}\bigl(\mathbf{W};\hat{\mathbf{F}}_{I'\to I},\hat{\Sigma}_{I'\to I}\bigr),\quad p(\mathbf{W}\mid I,J,I')=\mathcal{N}\bigl(\mathbf{W};\hat{\mathbf{F}}_{I'\to J\to I},\hat{\Sigma}_{I'\to J\to I}\bigr).$  
 **Warp net** is trained by maximizing warp log-likelihood. A pixel-level **confidence** $C(I_1,I_2)=1-\exp\!\bigl(-r^2/2\,\sigma_{I_2\to I_1}^2\bigr)$ helps downweight non-corresponding regions and trust high-uncertainty predictions less.  
-###### Test-time DA - TENT
-Adaptively compute the mean and variance for BA over the test batch. 
-
-##### Multi-modal 3D Object Detection
+###### Test-time DA - TENT Adaptively compute the mean and variance for BA over the test batch. 
+##### Multi-modal Object Detection
 **Frustum PointNet**: reduce search space to 2D CNN box prediction
 **MV3D**: project pcd to BEV and fuses with camera view
 **PointPainting**: use semseg model and project semantic features onto points in the pcd
@@ -196,5 +194,13 @@ Adaptively compute the mean and variance for BA over the test batch.
 **AVOD**: project 3D anchor box grid into input image and BEV input and RoI pool. (mid fustion). Then again combine proposals with BEV and image features and refine the top k candidates (late fusion) **CLOC (pure late fusion)**: $k$ 2D predictions and $n$ 3D predictions. When there is high IoU fill the entry of a $k \times n \times 4$ tensor with (IoU, the 2 confidences, distance to the box) the 4 dim features are processed by a MLP to 1 dim. Max pool over $k$ for the final $n$ confidences.
 **CenterFusion**: take closest **radar** pillar which intersects with the frustum and concatenate image features with radial velocity (in x, y) and the depth from radar. 
 $F_{x,y,i}^j = 1/ M_i \begin{cases} f_i, & |x - c_x^j| \leq \alpha w^j \text{ and } |y - c_y^j| \leq \alpha h^j \\ 0, & \text{otherwise} \end{cases}$
-##### Multi-modal 2D Object Detection
-**CRF-Net: camera radar 2D detection**: 
+**CRF-Net: camera radar 2D detection**:  Project radar detection as 3 meter pillar into image, add channel with distance and cross section. The radar channels are added at different depths of the VGG encoder. Use **BlackIn** (deactivate image input with prob 0.2) to increase dependence on radar features. 
+###### Robust fusion 
+**Local patch-level measurement entropy**  
+$p_i^{mn}=\frac{1}{MN}\sum_{j=1}^M\sum_{k=1}^N \delta\bigl(I(m+j,n+k)-i\bigr),\quad i=0\ldots255.$   $\rho^{mn}=\sum_{i=0}^{255}p_i^{mn}\log\bigl(p_i^{mn}\bigr).$  
+Higher patch entropy $\rightarrow$ higher SNR.
+**Deep entropy-based adaptive fusion**  
+**1.** Compute entropy map for each sensor stream (LiDAR, camera, etc.).  
+**2.** Convolve + sigmoid $\rightarrow$ weights in $[0,1]$.   **3.** Pointwise multiply concatenated features by entropy-derived weights (amplify/attenuate).  **4.** Concatenate initial entropy with scaled features for subsequent detection layers.
+**HRFuser:** extends HRNet for multi-modality (camera primary, others additional).
+Parallel branches for camera modality. Multi-Window Cross-Attention (**MWCA**) fuses features across modalities.
