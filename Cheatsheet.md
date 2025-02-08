@@ -101,3 +101,50 @@ Use hungarian to define ground truth using binary mask overlap loss $\mathcal{L}
 $\mathcal{L}_{\text{mask-cls}}(z, z^{gt}) = \sum_{i=1}^N -\log(p_{\hat{\sigma}(i)}(c_i^{gt})) + [c_i^{gt} \neq \emptyset] \mathcal{L}_{\text{mask}}(m_{\hat{\sigma}(i)}, m_i^{gt})$ with this as the final loss. 
 CNN encoder-decoder, the mid features are passed to the $N$ mask query encoder. Decoder output is fed to MLP for class prediction, and for mask embeddings. The dot product of mask and per-pixel embed. predicts the mask. For panop. and instance **inference** $\arg \max_{i: c_i \neq \emptyset} p_i(c_i) \cdot m_i[h, w]$ For semseg predict $\arg \max_{c \in \{1, \dots, K\}} \sum_{i=1}^N p_i(c) \cdot m_i[h, w]$ 
 **Mask2Former**: 1. mask the decoder cross-attention 2. do cross-atte. before self-atte. 3. pass higher res features to decoder 4. Approximate $\mathcal{L}_{mask}$ with uniform and importance sampling. **OneFormer**: one model trained for all 3 tasks. Adds a task token and a task text. 
+# TODO OneFormer
+ 
+ ##### Unimodal 3D Object Detection
+**Multi-View CNN**: do element wise max pooling of feature maps extracted from renderings of different perspectives and feed to CNN-2.  **3D CNN**: use oct-tree
+###### Point Net
+**1.** predicted rigid body transform (RBT) points **2.** individual MLP (to higher dim. channels) **3.** another predicted RBT **4.** another individual MLP **5.** max-pool over channel dimension, produces one global feature vector (symmetric fn.) **6.** final MLP predicts logits
+**SemSeg**: concat local per point features, before pooling with global vector and predict logits for every point. 
+###### PointNet++
+**SetAbstraction**: **1.** iterative farthest point sampling **2.** Group points within a ball around the sampled anchors **3.** PointNet layer (individual MLP, max pool across channels, MLP on global output vector) **SemSeg**: alternate interpolation plus skip link concatenation, and individual per point MLP. 
+**Interpolation:** $w_{ij} = 1 / d(\mathbf{x}_j, \mathbf{x}_i)^p, \; i = 1, \dots, k$ (KNN)  $\mathbf{f}(\mathbf{x}_j) = \sum_{i=1}^k w_{ij} \mathbf{f}(\mathbf{x}_i))/(\sum_{i=1}^k w_{ij})$   
+###### VoxelNet - LiDAR
+**Voxelization**: **1.** divide pcd **2.** sample t points per voxel **3.** sample's 3D position and centroid offset  and RRP makeup feature vector **4.** pass through individual MLP **5.** max pool over channel produces, a single voxel feature vector.  The sparse 4D tensor is passed to the **Conv. middle layer**: 3D conv. BN, ReLU. Until only BEV, which is is passed to the **RPN**: Faster-RCNN style U-net, predicts anchor probability and
+**BBox regression**: Residual $u^*=(\Delta x,\Delta y,\Delta z,\Delta l,\Delta w,\Delta h,\Delta\theta)$ with $d_a=\sqrt{(l^a)^2+(w^a)^2}.$  
+$\Delta x=\frac{x_c^g - x_c^a}{d_a},\;\Delta y=\frac{y_c^g - y_c^a}{d_a},\;\Delta z=\frac{z_c^g - z_c^a}{h_a},\;\Delta l=\log\!\bigl(\frac{l^g}{l^a}\bigr),\;\Delta w=\log\!\bigl(\frac{w^g}{w^a}\bigr),\;\Delta h=\log\!\bigl(\frac{h^g}{h^a}\bigr),\;\Delta\theta=\theta^g-\theta^a,$  
+**VoxelNet loss** $L=\alpha\,\frac{1}{N_\text{pos}}\sum_i L_\text{cls}(p_i^\text{pos},1)+\beta\,\frac{1}{N_\text{neg}}\sum_j L_\text{cls}(p_j^\text{neg},0)+\frac{1}{N_\text{pos}}\sum_i L_\text{reg}(u_i,u_i^*)$.  
+Smooth L1 (Huber) for reg; cross-entropy for cls. (Augment with synthetic 3D obj.)
+###### PointRCNN 
+Use PointNet++ for per point features, classify into background or foreground. For foreground do **bin based 3D box regres.** discrete x-y gird with origin at point, classify the bin containing the box center and yaw angle. z and box dim. use normal regression. 
+Bin length: $\delta = (2S) / C$     Half-side of search space: $\mathcal{S}$    Number of bins $\mathcal{C}$
+$\text{bin}_x^{(p)} = \Bigl\lfloor (x^p - x^{(p)} + S) / \delta \Bigr\rfloor, \quad \text{bin}_y^{(p)} = \Bigl\lfloor (y^p - y^{(p)} + S) / \delta \Bigr\rfloor$  
+$\text{res}_u^{(p)} = (1 / C) \Bigl(u^p - u^{(p)} + S - \bigl(\text{bin}_u^{(p)} \cdot \delta + (\delta / 2)\bigr)\Bigr), \quad \text{res}_z^{(p)} = z^p - z^{(p)}$
+**Loss** for each positive anchor $p$:   $L_\text{bin}^{(p)}=\sum_{u\in\{x,y,\theta\}}\Bigl[F_\text{cls}\bigl(\text{bin}_u^{(p)},\,\widehat{\text{bin}_u^{(p)}}\bigr)+F_\text{reg}\bigl(\text{res}_u^{(p)},\,\widehat{\text{res}_u^{(p)}}\bigr)\Bigr],\quad L_\text{res}^{(p)}=\sum_{v\in\{z,h,w,l\}}F_\text{reg}\bigl(\text{res}_v^{(p)},\,\widehat{\text{res}_v^{(p)}}\bigr).$  
+Overall: $L_\text{reg}=\tfrac{1}{N_\text{pos}}\sum_{p\in\text{pos}}\bigl[L_\text{bin}^{(p)}+L_\text{res}^{(p)}\bigr].$  
+**Final prediction** augment proposed BBox points with fore-backgroud prediction and per point feature vectors. Transform to canonical frame and feed to PointNet++ for bin-based refinement and confidence prediction. 
+##### 3D Reconstruction and Localization
+
+# TODO ICP
+
+**Epipolar constraint** $p_2^T E p_1 = 0$  with **essential matrix** $E = [t]_{\times}R$ 
+###### SuperGlue
+**Attentional aggregation**: start with descriptors (e.g. SIFT) from both images, add positional/confidence embeddings via a small MLP. Pass these per-image features through $L$ blocks, each with: **1. Self-attention** (features attend to others in the same image):  
+   $^{(l)}\mathbf{Q}^{(1)} = ^{(l)}\mathbf{W}_Q \mathbf{X}^{(l-1)}(1)$, etc. with $\text{softmax}\bigl(^{(l)}\mathbf{Q}^{(1)\top} \, ^{(l)}\mathbf{K}^{(1)}\bigr) \, ^{(l)}\mathbf{V}^{(1)}.$  
+**2. Cross-attention** (features attend to the other image):  
+   $^{(l)}\mathbf{Q}^{(1)} = ^{(l)}\mathbf{W}_Q \mathbf{X}^{(l-1)}(1)$, etc. with $\text{softmax}\bigl(^{(l)}\mathbf{Q}^{(1)\top} \, ^{(l)}\mathbf{K}^{(2)}\bigr) \, ^{(l)}\mathbf{V}^{(2)}.$  
+After $L$ blocks, a final linear projection yields descriptors $f_i^{(1)}, f_j^{(2)}$ for **Differentiable optimal matching**: start with dot product between features as score, add dustbin to build a score matrix and normalize using the Sinkhorn algorithm. Train with $L_{matching} = -\sum_{(i, j) \in M}log(P_{ij}$)
+###### NeRF
+MLP mapping (3D pos. $\mathbf{x}$, viewing direction $\theta, \phi$) $\rightarrow$ (density $\sigma$, RGB color $\mathbf{c}$).
+MLP-1 maps $\mathbf{x} \rightarrow (\mathbf{f}, \sigma)$  and MLP-2 maps $(\mathbf{f}, (\theta, \psi)) \rightarrow \mathbf{c}$    
+**Volume rendering** approximate color along ray $r=o+t\,d$:  
+$\hat{C}(r)=\sum_{i=1}^N T_i\bigl(1-\exp(-\sigma_i\,\delta_i)\bigr)\,c_i,\quad T_i=\exp\Bigl(-\sum_{j=1}^{i-1}\sigma_j\,\delta_j\Bigr).$  
+Render loss is $\|\hat{C}(r)-C_{\text{gt}}(r)\|^2$.  
+**Positional encoding** map coordinates to higher frequency:  
+$\gamma(p)=\bigl(\sin(2^0\pi p),\,\cos(2^0\pi p),\,\dots,\sin(2^{L-1}\pi p),\,\cos(2^{L-1}\pi p)\bigr).$  
+**NeRF in the wild** splits scene into: **Static** density $\sigma$, color that can depend on an input appearance embedding. **Transient** density/color for dynamic objects, controlled by a transient embedding.  
+**Block-NeRF**: Splits large driving scenes into sub-NeRFs (e.g., per intersection). **Visibility Predictor:** Each sub-NeRF uses fv(x,d)f_v(x, d) to model transmittance. **Training:** Masks dynamic objects via semantic segmentation. **Inference:** Combines sub-NeRF outputs with distance-based weights wi∼d(c,xi)−pw_i \sim d(c, x_i)^{-p} and visibility. **Transition Handling:** Discards sub-NeRFs with low mean visibility for smooth transitions.
+
+##### Domain adaptation
