@@ -19,8 +19,6 @@ $G:$ gain, $\sigma:$ radar cross section, $A_e:$ aperture, $L:$ loss factor
 **Ordinal Loss**  $L(x,\Theta)=-\tfrac{1}{N}\sum_{w=0}^{W-1}\sum_{h=0}^{H-1}\Bigl[\sum_{k=0}^{l(w,h)-1}\log(\mathcal{P}^{k}_{(w, h)})+\sum_{k=l(w,h)}^{K-1}\log\bigl(1-\mathcal{P}^{k}_{(w, h)}\bigr)\Bigr].$
 **Inference**  $\hat{l}(w,h)=\sum_{k=0}^{K-1}\eta\bigl(\mathcal{P}^{k}_{(w, h)}\ge0.5\bigr),\;\hat{d}(w,h)=t_{\hat{l}(w,h)}+t_{\hat{l}(w,h)+1} / 2.$
 with probability that prediction is larger than ordinal value } k $= \mathcal{P}^{k}_{(w, h)} = P\left(\hat{\ell}(w, h) > k \,|\, \chi, \Theta \right) = (e^{\mathcal{Y}(w, h, 2k)}) / (e^{\mathcal{Y}(w, h, 2k)} + e^{\mathcal{Y}(w, h, 2k+1)})$
-
-
 ###### P3Dept
 Exploit piecewise planarity. Predict plane coeffs $C(u,v)$ instead of depth $D(u,v)$, grouping pixels on the same 3D plane.  
 **Plane eq**: $n\cdot P + d=0,\;n=(a,b,c)$, point $P=(X,Y,Z)$ from pinhole model $Z=D(u,v),\;X=\frac{Z(u-u_0)}{f_x},\;Y=\frac{Z(v-v_0)}{f_y}$.  
@@ -54,20 +52,13 @@ $\mathcal{L}_{\text{match}}(y_i, \hat{y}_{\sigma(i)}) = -[c_i \neq \emptyset] \h
 $\mathcal{L}_{\text{Hungarian}}(y, \hat{y}) = \sum_{i=1}^{N} \left[ -\log \hat{p}_{\sigma(i)}(c_i) + [c_i \neq \emptyset] \mathcal{L}_{\text{box}}(b_i, \hat{b}_{\sigma(i)}) \right]$
 ##### Instance Segmentation 
 ###### Mask R-CNN
-Add decoupled FCN to predict masks. Uses RoI Align not RoI Pool. Adds a binary-ce loss.  $\mathcal{L}_\text{mask}(s^u, w) = -\frac{1}{m^2} \sum_{i=1}^{m^2} \Big( (1 - w[i]) \log(1 - s^u[i]) + w[i] \log(s^u[i]) \Big)$ 
+Add decoupled FCN to predict masks. Uses RoI Align not RoI Pool. Adds a binary-CE loss.  $\mathcal{L}_\text{mask}(s^u, w) = -\frac{1}{m^2} \sum_{i=1}^{m^2} \Big( (1 - w[i]) \log(1 - s^u[i]) + w[i] \log(s^u[i]) \Big)$ 
 Low resolution, slow, and needs non-max-suppression. 
-
-
-# TODO spatial emebeddings
 ###### Joint optimization of spatial embeddings and clustering bandwidth
-Assign each pixel $x_i$ to an instance $S_k$ by learning offsets to the centroid $C_k=\frac{1}{|S_k|}\sum_{x\in S_k}x$.  
-**Naive**: direct centroid regression $\mathcal{L}_\text{regr}=\sum_i\lVert o_i-(C_k-x_i)\rVert^2$.  
-**Joint opt**: spatial embedding $e_i=x_i+o_i$, bandwidth $\sigma_i$. Compute $\phi_k(e_i)=\exp\!\bigl(-(\lVert e_i-C_k\rVert^2) / (2\,\sigma_k^2)\bigr)$ with $\sigma_k=\frac{1}{|S_k|}\sum_{x_i\in S_k}\sigma_i$.  
-**Assignment**: $x_i$ to $S_k$ if $\phi_k(e_i)>0.5$.   **Sequential clustering**: (i) pick highest seed as new centroid $(\hat{C}_k,\hat{\sigma}_k)$ (ii) assign all $x_i$ satisfying condition to instance (iii) repeat.   **Supervision**: $\phi_k$ supervised via Lovasz-hinge. Offsets $o_i$ and $\sigma_i$ supervised implicitly by backprop.
-
-
-
-
+Assign each pixel $x_i$ to an instance $S_k$ by learning offsets to the centroid $C_k=1/|S_k| * \sum_{x\in S_k}x$.   **Naive**: direct centroid regression $\mathcal{L}_\text{regr}=\sum_i\lVert o_i-(C_k-x_i)\rVert^2$.  
+**Joint opt**: spatial embedding $e_i=x_i+o_i$, bandwidth $\sigma_i$. Compute $\phi_k(e_i)=\exp\!\bigl(-(\lVert e_i-C_k\rVert^2) / (2\,\sigma_k^2)\bigr)$ with $\sigma_k=1/|S_k| * \sum_{x_i\in S_k}\sigma_i$.  
+**Assignment**: $x_i$ to $S_k$ if $\phi_k(e_i)>0.5$.   **Sequential clustering**: (i) pick highest seed as new centroid $(\hat{C}_k,\hat{\sigma}_k)$ (ii) assign all $x_i$ satisfying condition to instance (iii) repeat.   **Supervision**: $\phi_k$supervised via Lovasz-hinge. Offsets $o_i$ and $\sigma_i$ supervised implicitly by backprop.
+$\mathcal{L}_{\text{seed}} = 1/C N \sum_{i=1}^N \sum_{c=1}^C \left( \sum_{k : \text{class}(S_k) = c} \bigl([x_i \in S_k] |s_{c,i} - \phi_k(e_i)|^2 + [x_i \in \text{bg}(c)] s_{c,i}^2 \bigr) \right)$
 ##### Panoptic Segmentation - class and instance labels
 **Panoptic Quality** First match segments (IoU greater 0.5)  for a single class: $PQ=\frac{\sum_{(p,g)\in\text{TP}}\mathrm{IoU}(p,g)}{|TP|+\tfrac12|FP|+\tfrac12|FN|} = \underbrace{\tfrac{\sum_{\text{TP}}\mathrm{IoU}(p,g)}{|TP|}}_{\text{SQ}}\times\underbrace{\tfrac{|TP|}{|TP|+\tfrac12|FP|+\tfrac12|FN|}}_{\text{RQ (F1)}}.$  
 For uncountable classes, one GT segment per image, IoU computed image-wise then averaged. RQ = F1 score. SQ is the average IoU over matched segments.
@@ -78,11 +69,11 @@ Add semseg branch to Mask R-CNN. Higher confidence wins overlap. Instance wins o
 ###### MaskFormer
 Use hungarian to define ground truth using binary mask overlap loss $\mathcal{L}_{\text{match}}(z_{\sigma(i)}, z_i^{gt}) = -[c_i^{gt} \neq \emptyset] p_{\sigma(i)}(c_i^{gt}) + [c_i^{gt} \neq \emptyset] \mathcal{L}_{\text{mask}}(m_{\sigma(i)}, m_i^{gt})$
 $\mathcal{L}_{\text{mask-cls}}(z, z^{gt}) = \sum_{i=1}^N -\log(p_{\hat{\sigma}(i)}(c_i^{gt})) + [c_i^{gt} \neq \emptyset] \mathcal{L}_{\text{mask}}(m_{\hat{\sigma}(i)}, m_i^{gt})$ with this as the final loss. 
-CNN encoder-decoder, the mid features are passed to the $N$ mask query encoder. Decoder output is fed to MLP for class prediction, and for mask embeddings. The dot product of mask and per-pixel embed. predicts the mask. For panop. and instance **inference** $\arg \max_{i: c_i \neq \emptyset} p_i(c_i) \cdot m_i[h, w]$ For semseg predict $\arg \max_{c \in \{1, \dots, K\}} \sum_{i=1}^N p_i(c) \cdot m_i[h, w]$ 
-**Mask2Former**: 1. mask the decoder cross-attention 2. do cross-atte. before self-atte. 3. pass higher res features to decoder 4. Approximate $\mathcal{L}_{mask}$ with uniform and importance sampling. **OneFormer**: one model trained for all 3 tasks. Adds a task token and a task text. 
-# TODO OneFormer
- 
- ##### Unimodal 3D Object Detection
+CNN encoder-decoder, the mid features are passed to the $N$ mask query encoder. Decoder output is fed to MLP for class prediction, and for mask embeddings. The dot product of mask and per-pixel embed. predicts the mask. For **panop. and instance inference** $\arg \max_{i: c_i \neq \emptyset} p_i(c_i) \cdot m_i[h, w]$ For **semseg predict** $\arg \max_{c \in \{1, \dots, K\}} \sum_{i=1}^N p_i(c) \cdot m_i[h, w]$ 
+**Mask2Former**: 1. mask the decoder cross-attention 2. do cross-atte. before self-atte. 3. pass higher res features to decoder 4. Approximate $\mathcal{L}_{mask}$ with uniform and importance sampling. **OneFormer**: one model trained for all 3 tasks. Adds a task query and a task text.
+The embeddings from the TextMapper are used for contrastive learning of the queries. 
+The contrastive loss maximises the softmax for each query, text-embedding pair. 
+##### Unimodal 3D Object Detection
 **Multi-View CNN**: do element wise max pooling of feature maps extracted from renderings of different perspectives and feed to CNN-2.  **3D CNN**: use oct-tree
 ###### Point Net
 **1.** predicted rigid body transform (RBT) points **2.** individual MLP (to higher dim. channels) **3.** another predicted RBT **4.** another individual MLP **5.** max-pool over channel dimension, produces one global feature vector (symmetric fn.) **6.** final MLP predicts logits
@@ -105,10 +96,13 @@ $\text{res}_u^{(p)} = (1 / C) \Bigl(u^p - u^{(p)} + S - \bigl(\text{bin}_u^{(p)}
 Overall: $L_\text{reg}=\tfrac{1}{N_\text{pos}}\sum_{p\in\text{pos}}\bigl[L_\text{bin}^{(p)}+L_\text{res}^{(p)}\bigr].$  
 **Final prediction** augment proposed BBox points with fore-backgroud prediction and per point feature vectors. Transform to canonical frame and feed to PointNet++ for bin-based refinement and confidence prediction. 
 ##### 3D Reconstruction and Localization
-
-# TODO ICP
-
 **Epipolar constraint** $p_2^T E p_1 = 0$  with **essential matrix** $E = [t]_{\times}R$ 
+###### ICP
+Minimize $E(\mathbf{R}, \mathbf{t}, \phi) = \sum_{i=1}^n \left\| \mathbf{R} \mathbf{P}_s^{(\phi(i))} + \mathbf{t} - \mathbf{P}_{s'}^{(i)} \right\|_2^2$
+**Optimal translation** Given rotation $\hat{R}$, the translation $\hat{\mathbf{t}}$ aligns centroids: $\hat{\mathbf{t}} \;=\; \mu_{s'} \;-\; \hat{R}\,\mu_{s,\phi}$ 
+**Rotation via SVD**  
+Minimizing the objective can be rewritten as:
+$\max_{\mathbf{R}} \left\{ \sum_{i=1}^n \left( \mathbf{P}_s^{(\phi(i))} - \mu_{s,\phi} \right)^\top \mathbf{R}^\top \left( \mathbf{P}_{s'}^{(i)} - \mu_{s'} \right) \right\} = \max_{\mathbf{U}, \mathbf{V}} \left\{ \text{trace} \left( \mathbf{U}^\top \mathbf{W} \mathbf{V} \right) \right\}$ where $\mathbf{R}^\top = \mathbf{U} \mathbf{V}^\top$ and $\mathbf{W} = \sum_{i=1}^n \left( \mathbf{P}_s^{(\phi(i))} - \mu_{s,\phi} \right) \left( \mathbf{P}_{s'}^{(i)} - \mu_{s'} \right)^\top$  is the cross-covariance matrix of the two point samples. With $\mathbf{W} = \tilde{\mathbf{U}} \Sigma \tilde{\mathbf{V}}^\top$,   $\hat{\mathbf{R}} = \tilde{\mathbf{V}} \mathbf{\Sigma'} \tilde{\mathbf{U}}^\top.$ $\mathbf{\Sigma'} = diag(1 \> 1 \> \det(\mathbf{\hat{U}})\det(\mathbf{\hat{V}}))$
 ###### SuperGlue
 **Attentional aggregation**: start with descriptors (e.g. SIFT) from both images, add positional/confidence embeddings via a small MLP. Pass these per-image features through $L$ blocks, each with: **1. Self-attention** (features attend to others in the same image):  
    $^{(l)}\mathbf{Q}^{(1)} = ^{(l)}\mathbf{W}_Q \mathbf{X}^{(l-1)}(1)$, etc. with $\text{softmax}\bigl(^{(l)}\mathbf{Q}^{(1)\top} \, ^{(l)}\mathbf{K}^{(1)}\bigr) \, ^{(l)}\mathbf{V}^{(1)}.$  
@@ -151,9 +145,11 @@ $\mathcal{L}_{\text{cdc}} = \frac{\sum_i \mathcal{L}_{\text{cdc}, i} [\bar{c}_i 
 ###### Output level adaptation
 **AdaptSegNet**: CyCADA but with per pixel output discriminator.  $\mathcal{L}_{\text{adv}, D} = \mathbb{E}_{I_s \sim X_S} \left[ \sum_{h, w} \log D(P_s)(h, w) \right] + \mathbb{E}_{I_t \sim X_T} \left[ \sum_{h, w} \log \left( 1 - D(P_t)(h, w) \right) \right]$
 $\mathcal{L}_{\text{adv}, f} = \mathbb{E}_{I_t \sim X_T} \left[ \sum_{h, w} \log \left( 1 - D(P_t)(h, w) \right) \right]$
-
-# TODO self training
-
+###### Self training with pseudo labels
+$\min_{\mathbf{w}, \hat{\mathbf{y}}} \mathcal{L}_{ST}(\mathbf{w}, \hat{\mathbf{y}}) = -\sum_{s=1}^S \sum_{n=1}^N \mathbf{y}_{s,n}^\top \log(\mathbf{p}_n(\mathbf{w}, \mathbf{I}_s)) -\sum_{t=1}^T \sum_{n=1}^N [\hat{\mathbf{y}}_{t,n}^\top \log(\mathbf{p}_n(\mathbf{w}, \mathbf{I}_t)) + k\hat{\mathbf{y}}_{t,n}[1]]$ $s.t.\ \hat{\mathbf{y}}_{t,n} \in \{{e}^{(i)} | e^{(i)} \in \mathbb{R}^C \cup 0\}, \ \forall t, n,$ $k > 0$ Alternate **a.** fix $\mathbf{w}$ optimize $\mathbf{\hat{y}}$ **b.** fix $\mathbf{\hat{y}}$ optimize $\mathbf{w}$ 
+**Class adaptive** $\min_{\mathbf{w}, \hat{\mathbf{y}}} \mathcal{L}_{CB}(\mathbf{w}, \hat{\mathbf{y}}) =  -\sum_{s=1}^S \sum_{n=1}^N \mathbf{y}_{s,n}^\top \log(\mathbf{p}_n(\mathbf{w}, \mathbf{I}_s))  -\sum_{t=1}^T \sum_{n=1}^N \sum_{c=1}^C [\hat{\mathbf{y}}_{t,n}^{(c)} \log(p_n(c|\mathbf{w}, \mathbf{I}_t)) + k_c \hat{\mathbf{y}}_{t,n}^{(c)}]$ $s.t.\ \hat{\mathbf{y}}_{t,n} = [\hat{\mathbf{y}}_{t,n}^{(1)}, \dots, \hat{\mathbf{y}}_{t,n}^{(C)}] \in \{{e}^{(i)} | e^{(i)} \in \mathbb{R}^C \cup 0\}, \ \forall t, n,$   $k_c > 0, \forall c$
+**Class balanced** $\hat{\mathbf{y}}_{t,n}^{(c)*} = \begin{cases} 1, & \text{if } c = \arg\max_c \frac{p_n(c|\mathbf{w}, \mathbf{I}_t)}{\exp(-k_c)}, \ \frac{p_n(c|\mathbf{w}, \mathbf{I}_t)}{\exp(-k_c)} > 1 \\ 0, & \text{otherwise} \end{cases}$
+The schedule of $k$ is the **curriculum**. **Basic self-training** select k such that $p$ percent of the target domain are pseudo labeled. **Class balanced**: indirectly determines $p$ per class
 **DACS**: create artificial mixed (S-T) images for training. 
 **Probabilistic learned warping for output alignment**: from images $I, J$ generate $I'$ with $W^{-1}$. Predict $\mathbf{F_{I'\rightarrow I}}, \mathbf{F_{J\rightarrow I}}, \mathbf{F_{I\rightarrow J}}$  Train: $\mathcal{L}_{I \to I} = \| \hat{\mathbf{F}}_{I \to I} - \mathbf{W} \|^2$
 $\mathcal{L}_{I \to J \to I} = \| \mathbf{V} \cdot (\hat{\mathbf{F}}_{I \to J} + \Phi \hat{\mathbf{F}}_{J \to I} (\hat{\mathbf{F}}_{J \to I}) - \mathbf{W}) \|^2 = \| \mathbf{V} \cdot (\hat{\mathbf{F}}_{I \to J \to I} - \mathbf{W}) \|^2$
@@ -210,7 +206,6 @@ Adds a camera position token with $\mathcal{L}_{\text{camera}} = \| \mathbf{t} -
 Train GAN to resynthesize input images from segmentation (outliers will be poorly reconstructed). Train **discrepancy network** (U-Net style) to detect inconsistencies. Train with synthetic outliers added to data. 
 ##### V2VNet: vehicle to vehicle communication
 Transmit and receive intermediate LiDAR features from other agents. Trade-off between raw data (high bandwidth) and final BBox (low information) transmission. 
-
 ##### Multiple object tracking (MOT)
 ###### Metrics
 **Mostly tracked - MT:** Ground-truth traj. tracked in ≥80% of frames. 
